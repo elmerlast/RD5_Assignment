@@ -1,0 +1,25 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>會員專區</title>
+</head>
+<body>
+
+<table width="300" border="7" align="center" cellpadding="5" cellspacing="0" bgcolor="#F2F2F2">
+  <tr>
+    <td align="center" bgcolor="#CCCCCC"><font color="#FFFFFF">會員系統 － 會員專用</font></td>
+  </tr>
+  <tr>
+    <td align="center" valign="baseline">這是只屬於你的頁面~!</td>
+  </tr>
+  <tr>
+    <td align="center" bgcolor="#CCCCCC"><a href="index">回首頁</a></td>
+  </tr>
+</table>
+
+
+</body>
+</html>

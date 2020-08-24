@@ -76,7 +76,7 @@ body {
 
   <body class="text-center">
     <form class="form-signin" id="form_sign_in" name="form_sign_in" method="post" action=""> 
-      <img class="mb-4" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTP0bT4aNrM2SqIkcRcFZgY3uRNA2jiRtagrw&usqp=CAU" alt="" width="72" height="72">
+      <img class="mb-4" src="/RD5_Assignment/img/olbicon.jpeg">
       <h1 class="h3 mb-3 font-weight-normal">歡迎來到線上網銀！</h1>
       <label for="inputEmail" class="sr-only">使用者名稱</label>
       <input type="email" id="inputEmail" class="form-control" placeholder="請輸入使用者名稱" required autofocus>
@@ -87,7 +87,7 @@ body {
           <input type="checkbox" value="remember-me"> 記住我
         </label>
       </div>
-      <!-- 目前做到這 -->
+      <!-- 08/24 17:38 目前做到這 -->
       <button class="btn btn-lg btn-primary btn-block" type="submit" name="btnOK" id="btnOK" value="登入">登入
       </button>
     </form>

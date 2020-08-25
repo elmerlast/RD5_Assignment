@@ -5,17 +5,35 @@ class OLBController extends Controller
 
     public function index()
     {
+        require_once("sql/connDB.php");
         $user = $this->model("User");
         session_start();
 
+        $sqlStatement =<<<mulity
+        SELECT * FROM `tbl_users`;
+        mulity;
+        $result =mysqli_query($link, $sqlStatement);
+        print_r($result);
 
-        //確認使用者是否登入會員。如果未登入給予使用者來賓的身份。
+        //如果使用者有登入過且SSESSION時效未過期，將使用者自動傳送到交易頁面
         if (isset($_SESSION["uid"])) {
-            $user->sUserName = $_SESSION["uid"];
+          header("Location:transaction");
+        }
 
-        } else {
-            $user->sUserName = "Guest";
+        /*
+         *使用者按下「登入」按鈕，在確認使用者至少有輸入一個字元後讓使用者登入，
+         *並在SESSION中記錄登入成功的狀態(Value = 1)。
+         */
+        if (isset($_POST["btnOK"])) {
+            $user->userName = $_POST["inputUid"];
+            $user->userPwd = $_POST["inputPwd"];
+            if (trim($user->sUserName) != "") {
+                $_SESSION["uid"] = $user->sUserName;
+                $_SESSION["login"] = 1;
+                header("Location:transaction");
+                exit();
 
+            }
         }
         $this->view("OLB/index", $user);
     }

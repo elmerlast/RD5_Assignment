@@ -1,7 +1,8 @@
 <?php
 
 class User {
-    public $sUserName;
+    public $userName;
+    public $userPwd;
 }
 
 ?>

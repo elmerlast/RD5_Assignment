@@ -14,7 +14,8 @@ CREATE TABLE `tbl_accounts` (
 `balance` double NOT NULL,
 `status` varchar(10) NOT NULL,
 `bdate` varchar(100) NOT NULL,
-PRIMARY KEY (`id`)
+PRIMARY KEY (`id`),
+UNIQUE KEY `acc_no` (`acc_no`)
 )ENGINE=InnoDB AUTO_INCREMENT=6 ;
 
 --
@@ -39,18 +40,19 @@ CREATE TABLE `tbl_users` (
     `surname` varchar(40) NOT NULL,
     `given_name`varchar(80) NOT NULL,
     `email` varchar(100) NOT NULL,
-    `pwd` varchar(120) NOT NULL,
+    `password` varchar(120) NOT NULL,
     `gender` varchar(6) NOT NULL,
     `phone` varchar(20) NOT NULL,
     `bdate` varchar(100) NOT NULL,
-    PRIMARY KEY(`id`)
+    PRIMARY KEY(`id`),
+    UNIQUE KEY `email` (`email`)
 )ENGINE=InnoDB AUTO_INCREMENT=6 ;
 
 --
 -- 新增使用者(tbl_users)資料表記錄
 --
 
-INSERT INTO `tbl_users` (`id`, `surname`, `given_name`, `email`, `pwd`, `gender`, `phone`, `bdate` )
+INSERT INTO `tbl_users` (`id`, `surname`, `given_name`, `email`, `password`, `gender`, `phone`, `bdate` )
 VALUES
 (1, '林', '佐博', 'Arrom1989@gustr.com', '0d5a0fe6b4b7e8a26fee827d0eaec2302d42b8d4d089211b9909f5cca5c9d1da','Male', '0911708319', '2015-01-03 16:35:37'),
 (2, '黃', '宜珊', 'muveffone-1814@yopmail.com', 'a097a2714e90763317edc7d02569d15780ca0ad2879f9be96981f6ec39098f3b','Female', '0924803904', '2017-08-16 11:41:03'),
@@ -66,12 +68,9 @@ CREATE TABLE `tbl_address` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `user_id` int(10) NOT NULL,
   `address` varchar(200) NOT NULL,
-  `city` varchar(40) NOT NULL,
-  `state` varchar(40) NOT NULL,
   `zipcode` int(10) NOT NULL,
-  `country` varchar(40) NOT NULL,
   PRIMARY KEY (`id`)
-)
+)ENGINE=InnoDB;
 
 
 

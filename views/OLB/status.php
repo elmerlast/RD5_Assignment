@@ -13,7 +13,7 @@
     <td align="center" bgcolor="#CCCCCC"><font color="#FFFFFF">訊息</font></td>
   </tr>
   <tr>
-    <td align="center" valign="baseline"><?php echo $data->pageMessage;?></td>  
+    <td align="center" valign="baseline"><?php echo $data->message;?></td>  
   </tr>
 
 </table>

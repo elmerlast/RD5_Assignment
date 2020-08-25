@@ -5,15 +5,16 @@ class OLBController extends Controller
 
     public function index()
     {
-        require_once("sql/connDB.php");
         $user = $this->model("User");
         session_start();
+        echo "fStYx6nP <br />";
+        var_dump($_SESSION);
 
-        $sqlStatement =<<<mulity
-        SELECT * FROM `tbl_users`;
-        mulity;
-        $result =mysqli_query($link, $sqlStatement);
-        print_r($result);
+        // $sqlStatement =<<<mulity
+        // SELECT * FROM `tbl_users`;
+        // mulity;
+        // $result =mysqli_query($link, $sqlStatement);
+        // print_r($result);
 
         //如果使用者有登入過且SSESSION時效未過期，將使用者自動傳送到交易頁面
         if (isset($_SESSION["uid"])) {
@@ -24,16 +25,25 @@ class OLBController extends Controller
          *使用者按下「登入」按鈕，在確認使用者至少有輸入一個字元後讓使用者登入，
          *並在SESSION中記錄登入成功的狀態(Value = 1)。
          */
-        if (isset($_POST["btnOK"])) {
+        if (isset($_POST["btnLogin"])) {
             $user->userName = $_POST["inputUid"];
-            $user->userPwd = $_POST["inputPwd"];
-            if (trim($user->sUserName) != "") {
-                $_SESSION["uid"] = $user->sUserName;
-                $_SESSION["login"] = 1;
-                header("Location:transaction");
-                exit();
-
+            $user->userPwd = hash('sha256', "{$_POST["inputPwd"]}");
+            if ($user->userName && $user->userPwd){
+                  require_once("sql/connDB.php");
+                  $sql = "select * from tbl_users where user_name = '$user->userName' and password='$user->userPwd'";
+                  $result = mysqli_query($link, $sql);
+                  $rows = mysqli_fetch_array($result);
+                  if($rows){
+                      $_SESSION["uid"] = $rows["user_name"];
+                      $_SESSION["login"] = 1; //己登入，進入訊息頁面會顯示登入提示。
+                      header("Location:status");
+                      exit();
+                    }else{
+                      echo "<script> alert('帳號或密碼錯誤！'); </script>";
+                    }
             }
+            mysqli_close();
+            
         }
         $this->view("OLB/index", $user);
     }
@@ -69,57 +79,85 @@ class OLBController extends Controller
 
 
 
-    public function secret()
+    public function transaction()
     {
         session_start();
-        /*
-         *使用者在未登入的狀態下點選「會員專區」的按鈕，爲了讓使用者在登入會員後
-         *直接跳轉會員專區頁面因此session中留下了一筆lastPage的記錄。
-         */
-        if($_SESSION["uid"] == "Guest")
+        $transactionPage = $this->model("service");
+        $user = $this->model("User");
+        $user->userName = $_SESSION["uid"];
+        require_once("sql/connDB.php");
+        $sql = "select balance from tbl_accounts where user_id = (select id from tbl_users where user_name = '$user->userName')";
+        $result = mysqli_query($link, $sql);
+        $rows = mysqli_fetch_array($result);
+        mysqli_close();
+        $transactionPage->balance = $rows["balance"];
+
+        if(!isset($_SESSION["uid"]))//使用者沒有登入的話將會被跳轉至登入首頁。
         {
-            $_SESSION["lastPage"] = "secret";
-            header("Location: login");
+            header("Location: index");
             exit();
         }
 
-        $this->view("Member/secret");
+        if (isset($_POST["service1"])) {
+            header("Location:deposit");
+        }
+
+        if (isset($_POST["service2"])) {
+            echo "提款";
+        }
+
+        if (isset($_POST["service3"])) {
+            $test = 222;
+            echo "<script> alert('您目前帳戶的餘額爲：{$transactionPage->balance}'); </script>";
+            
+        }
+
+        if (isset($_POST["service4"])) {
+            echo "查詢明細";
+        }
+
+
+        $this->view("OLB/transaction", $transactionPage);
+    }
+
+
+    public function deposit()
+    {
+        
+        $this->view("OLB/deposit");
+       
     }
 
 
     public function status()
     {
-        $page = $this->model("LastPage");
+        $information = $this->model("pageMessage");
         session_start();
         /*
-         *根據session的login記錄及lastPage記錄判斷在提醒訊息頁面中要顯示什麼提示訊息。
+         *根據session的login記錄判斷在提醒訊息頁面中要顯示什麼提示訊息。
          *提示完成功訊息後會將session的login的值設定爲「0」，讓使用者下一次到達此頁面時好以讓
          *提醒訊息頁面判斷，顯示出已登出的提示訊息。
          */
-        if (isset($_SESSION["lastPage"]) and $_SESSION["login"] == 1) {
+
+        if($_SESSION["login"] == 1){
             $_SESSION["login"] = 0;
-            $page->pageMessage = "登入成功!，2秒後自動跳轉到會員專區";
-            header("Refresh:2; url=secret");
-            $this->view("Member/status", $page);
-            exit();
-        }elseif($_SESSION["login"] == 1){
-            $_SESSION["login"] = 0;
-            $page->pageMessage = "登入成功!，2秒後自動跳轉到首頁";
-            header("Refresh:2; url=index");
-            $this->view("Member/status", $page);
+            $information->message = "登入成功!，2秒後自動跳轉到龬路銀行頁面";
+            header("Refresh:2; url=transaction");
+            $this->view("OLB/status", $information);
             exit();
         }else{
             $_SESSION["uid"] = "Guest";
-            $page->pageMessage = "已登出，2秒後自動跳轉到首頁";
+            $information->message = "已登出，2秒後回到到登入頁面";
             $_SESSION["lastPage"] = NULL;
             header("Refresh:2; url=index");
-            $this->view("Member/status", $page);
+            $this->view("OLB/status", $information);
             exit();
         }
         
         
        
     }
+
 
 
 }

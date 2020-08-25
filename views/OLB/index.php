@@ -3,8 +3,6 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
   <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
 
   <title>線上網銀</title>
@@ -14,8 +12,8 @@
   <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"> 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <!-- Custom styles for this template -->
   <link rel="stylesheet" type="text/css" href="/RD5_Assignment/CSS/signin.css">
@@ -55,8 +53,7 @@
         <p>還沒有帳號嗎 ? <a href="page-register.php"> 點我註冊</a></p>
       </label>
     </div>
-    <!-- 08/24 17:38 目前做到這 -->
-    <button class="btn btn-lg btn-info btn-block" type="submit" name="btnOK" id="btnOK" value="登入">登入
+    <button class="btn btn-lg btn-info btn-block" type="submit" name="btnLogin" id="btnLogin" value="登入">登入
     </button>
   </form>
 </body>

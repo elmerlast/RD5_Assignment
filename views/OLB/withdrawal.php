@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>歡迎存款</title>
+  <title>歡迎提款</title>
 
   <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
 
@@ -22,14 +22,14 @@
 <body class="text-center">
   <form class="form-signin" id="form_sign_in" name="form_sign_in" method="post" action="">
     <img class="mb-4" src="/RD5_Assignment/img/deposit.png">
-    <h1 class="h3 mb-3 font-weight-normal">存款至您的帳戶</h1>
+    <h1 class="h3 mb-3 font-weight-normal">從您的帳戶提款</h1>
     <label for="inputEmail">目前帳戶號碼：</label>
     <input type="text" readonly="readonly" name="account" id="account" value="<?=$data->account; ?>" class="form-control"  required autofocus>
-      <label for="inputPassword" class="sr-only">欲存款金額</label>
-      <input type="number"  min="0" max="30000" id="inputDeposit" name="inputDeposit" class="form-control" placeholder="請輸入存款金額" required>
+      <label for="inputPassword" class="sr-only">欲提款金額</label>
+      <input type="number"  min="0" max="30000" id="inputWithdrawal" name="inputWithdrawal" class="form-control" placeholder="請輸入提款金額" required>
 
 
-      <button class="btn btn-lg btn-info btn-block" type="submit" name="btnDeposit" id="btnDeposit" value="確認存款">確認存款
+      <button class="btn btn-lg btn-warning btn-block" type="submit" name="btnWithdrawal" id="btnWithdrawal" value="確認提款">確認提款
       </button>
   </form>
 </body>

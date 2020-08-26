@@ -50,7 +50,7 @@
     </div> -->
     <div class="checkbox mb-3">
       <label>
-        <p>還沒有帳號嗎 ? <a href="page-register.php"> 點我註冊</a></p>
+        <p>還沒有帳號嗎 ? <a href="/RD5_Assignment/OLB/register"> 點我註冊</a></p>
       </label>
     </div>
     <button class="btn btn-lg btn-info btn-block" type="submit" name="btnLogin" id="btnLogin" value="登入">登入

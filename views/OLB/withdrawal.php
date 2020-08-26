@@ -21,7 +21,7 @@
 
 <body class="text-center">
   <form class="form-signin" id="form_sign_in" name="form_sign_in" method="post" action="">
-    <img class="mb-4" src="/RD5_Assignment/img/deposit.png">
+    <img class="mb-4" src="/RD5_Assignment/img/withdraw.png">
     <h1 class="h3 mb-3 font-weight-normal">從您的帳戶提款</h1>
     <label for="inputEmail">目前帳戶號碼：</label>
     <input type="text" readonly="readonly" name="account" id="account" value="<?=$data->account; ?>" class="form-control"  required autofocus>

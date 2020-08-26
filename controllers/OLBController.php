@@ -48,32 +48,97 @@ class OLBController extends Controller
         $this->view("OLB/index", $user);
     }
 
-    public function login()
+    public function register()
     {
         session_start();
-        $user = $this->model("User");
+        $registerPage = $this->model("register");
         /*
-         *使用者按下「登入」按鈕，在確認使用者至少有輸入一個字元後讓使用者登入，
-         *並在SESSION中記錄登入成功的狀態(Value = 1)。
+         *使用者按下「註冊」按鈕
          */
-        if (isset($_POST["btnOK"])) {
-            $user->sUserName = $_POST["txtUserName"];
-            if (trim($user->sUserName) != "") {
-                $_SESSION["uid"] = $user->sUserName;
-                $_SESSION["login"] = 1;
-                header("Location:status");
+        if (isset($_POST["btnRegister"])) {
+
+            //檢查使用者輸入的使用者名稱是否已被註冊。
+            require_once "sql/connDB.php";
+            $sql = "select user_name from tbl_users;";
+            $result = mysqli_query($link, $sql);
+            while($row = mysqli_fetch_row($result)){
+                $rows[]=$row;
+            }
+            $rows[] =array("{$_POST["inputUserName"]}");
+            $rows1d = array_column($rows,0);
+            if (count($rows1d) != count(array_unique($rows1d))) {
+                echo "<script> alert('輸入的使用者名稱己被使用！'); </script>";
+            }else{
+
+                //新增使用者帳號
+                $registerPage ->surname = $_POST["inputSurname"];
+                $registerPage ->givenName = $_POST["inputGivenName"];
+                $registerPage ->userName = $_POST["inputUserName"];
+                $registerPage ->email = $_POST["inputEmail"];
+                $registerPage ->gender = $_POST["radioGender"];
+                $registerPage ->phone = $_POST["inputPhoneNumber"];
+                $registerPage ->password = hash('sha256', $_POST["inputPassword"]);
+                $bdate = gmdate('Y-m-d H:i:s', time() + 3600 * 8);
+                $sqlSTMT =<<<sqlSTMT
+                INSERT INTO `tbl_users` (`surname`, `given_name`, `user_name`, `email`, `password`, `gender`, `phone`, `bdate` )
+                VALUES
+                ('{$registerPage ->surname}', '{$registerPage ->givenName}', '{$registerPage ->userName}', '{$registerPage ->email}', '{$registerPage ->password}','{$registerPage ->gender}', '{$registerPage ->phone}', '{$bdate}');
+                sqlSTMT;
+                mysqli_query($link, $sqlSTMT) or die(mysqli_error($link));      
+
+                //亂數產生一個銀行帳戶號碼
+                while($AccoSuccess = 1){
+                    for ($i = 0; $i < 12; $i++) {
+                        $addNumber = strval(rand(0,9)) ;
+                        echo "<br/>";
+                        $newAccount = $newAccount.$addNumber;
+                    }
+                    //檢查亂數產生的帳戶號碼是否已被使用。
+                    $sql = "select acc_no from tbl_accounts;";
+                    $result = mysqli_query($link, $sql);
+                    while($row = mysqli_fetch_row($result)){
+                    $rows[]=$row;
+                    }
+                    $rows[] =array("{$newAccount}");
+                    $rows1d = array_column($rows,0);
+                    if (count($rows1d) != count(array_unique($rows1d))) {
+
+                    }else{
+                        break; //沒有重複，跳出迴圈。
+                    }
+                }
+                //新增新註冊使用者的銀行帳戶
+                $registerPage ->accNo = $newAccount;
+                $registerPage ->balance = 0;
+                $registerPage ->accStatus = "ACTIVE";
+                $bdate = gmdate('Y-m-d H:i:s', time() + 3600 * 8);
+                //取得新註冊使用者的帳號編號
+                $sqlSTMT = "select id from tbl_users where user_name = '{$_POST["inputUserName"]}' ;";
+
+                $result = mysqli_query($link, $sqlSTMT) or die(mysqli_error($link));
+                $addAcconUid = mysqli_fetch_array($result);
+                $sqlSTMT =<<<sqlSTMT
+                INSERT INTO `tbl_accounts` ( `user_id`, `acc_no`, `balance`, `status`, `bdate`)
+                VALUES
+                ({$addAcconUid["id"]}, '{$registerPage ->accNo}', {$registerPage ->balance}, '{$registerPage ->accStatus}', '{$bdate}');
+                sqlSTMT;
+                mysqli_query($link, $sqlSTMT) or die(mysqli_error($link));      
+
+                echo "<script> alert('註冊成功。關閉此對話欄回到登入頁面'); 
+                </script> ";
+                header("Refresh:0.1; url=transaction");
+                mysqli_close($link);
                 exit();
+                
 
             }
+    
+
+            
         }
 
-        //使用者按下「回首頁」 的按鈕後，回到首頁。
-        if (isset($_POST["btnHome"])) {
-            header("Location:index");
-            exit();
-        }
 
-        $this->view("Member/login", $user);
+        $this->view("OLB/register", $user);
 
     }
 
@@ -96,21 +161,21 @@ class OLBController extends Controller
             exit();
         }
 
-        if (isset($_POST["service1"])) {
+        if (isset($_POST["deposit_service"])) {
             header("Location:deposit");
         }
 
-        if (isset($_POST["service2"])) {
+        if (isset($_POST["withdrawal_service"])) {
             header("Location:withdrawal");
         }
 
-        if (isset($_POST["service3"])) {
+        if (isset($_POST["balance_service"])) {
             echo "<script> alert('您目前帳戶的餘額爲：{$transactionPage->balance}'); </script>";
 
         }
 
-        if (isset($_POST["service4"])) {
-            echo "查詢明細";
+        if (isset($_POST["details_service"])) {
+            header("Location:details");
         }
 
         $this->view("OLB/transaction", $transactionPage);
@@ -123,7 +188,7 @@ class OLBController extends Controller
         require_once "sql/connDB.php";
 
         $sqlSTMT =<<<sqlSTMT
-        select balance, acc_no
+        select balance, acc_no ,id
         from tbl_accounts 
         where user_id = 
         (select id from tbl_users where user_name = '{$_SESSION["uid"]}');
@@ -131,7 +196,9 @@ class OLBController extends Controller
         $result = mysqli_query($link, $sqlSTMT);
         $rows = mysqli_fetch_array($result);
         $depositPage->balance = $rows["balance"];
-        $depositPage->account = $rows["acc_no"];//取得使用者欲存款的帳戶現在的餘額以及帳戶號碼。
+        $depositPage->account = $rows["acc_no"];
+        $depositPage->accId = $rows["id"];//取得使用者欲存款帳戶現在的餘額以及帳戶號碼跟其編號。
+
 
         if (isset($_POST["btnDeposit"])) {
             $depositPage->balance += $_POST["inputDeposit"];
@@ -144,8 +211,17 @@ class OLBController extends Controller
             mysqli_query($link, $sqlSTMT) or die(mysqli_error($link));
             if(mysqli_affected_rows($link) >0 ){
                 echo "<script> alert('存款成功！您目前帳戶的餘額爲：{$depositPage->balance} 關閉頁面後將回到銀行首頁'); 
-                
                 </script> ";
+
+                $date = gmdate('Y-m-d H:i:s', time() + 3600 * 8);
+                $sqlSTMT =<<<sqlSTMT
+                INSERT INTO `tbl_transaction` ( `accno_id`, `tx_type`, `amount`, `date`, `to_accno`, `status`, `comments`)
+                VALUES
+                ($depositPage->accId, 'credit', {$_POST["inputDeposit"]}, '$date', '$depositPage->account', 'SUCCESS', '' );
+                sqlSTMT;//新增該筆存款成功的交易明細資料。
+                mysqli_query($link, $sqlSTMT);
+
+    
             }
             header("Refresh:0.1; url=transaction");
             mysqli_close($link);
@@ -163,7 +239,7 @@ class OLBController extends Controller
         require_once "sql/connDB.php";
 
         $sqlSTMT =<<<sqlSTMT
-        select balance, acc_no
+        select balance, acc_no ,id
         from tbl_accounts 
         where user_id = 
         (select id from tbl_users where user_name = '{$_SESSION["uid"]}');
@@ -171,7 +247,9 @@ class OLBController extends Controller
         $result = mysqli_query($link, $sqlSTMT);
         $rows = mysqli_fetch_array($result);
         $withdrawalPage->balance = $rows["balance"];
-        $withdrawalPage->account = $rows["acc_no"];//取得使用者欲存款的帳戶現在的餘額以及帳戶號碼。
+        $withdrawalPage->account = $rows["acc_no"];
+        $withdrawalPage->accId = $rows["id"];//取得使用者欲提款帳戶現在的餘額以及帳戶號碼跟其編號。
+
 
         if (isset($_POST["btnWithdrawal"])) {
             if($_POST["inputWithdrawal"] > $withdrawalPage->balance){
@@ -191,8 +269,16 @@ class OLBController extends Controller
             mysqli_query($link, $sqlSTMT) or die(mysqli_error($link));
             if(mysqli_affected_rows($link) >0 ){
                 echo "<script> alert('提款成功！您目前帳戶的餘額爲：{$withdrawalPage->balance}  關閉頁面後將回到銀行首頁'); 
-                
                 </script> ";
+
+                $date = gmdate('Y-m-d H:i:s', time() + 3600 * 8);
+                $sqlSTMT =<<<sqlSTMT
+                INSERT INTO `tbl_transaction` ( `accno_id`, `tx_type`, `amount`, `date`, `to_accno`, `status`, `comments`)
+                VALUES
+                ($withdrawalPage->accId, 'debit', {$_POST["inputWithdrawal"]}, '$date', '$withdrawalPage->account', 'SUCCESS', '' );
+                sqlSTMT;//新增該筆提款成功的交易明細資料。
+                mysqli_query($link, $sqlSTMT);
+
             }
             header("Refresh:0.1; url=transaction");
             mysqli_close($link);
@@ -201,6 +287,33 @@ class OLBController extends Controller
         }
         $this->view("OLB/withdrawal", $withdrawalPage);
 
+    }
+
+
+
+    public function details()
+    {
+        $detailsPage = $this->model("details");
+        session_start();
+        require_once "sql/connDB.php";
+
+        $sqlSTMT =<<<sqlSTMT
+        select CONCAT('TX', LPAD(id,6,0)) as tx_id, tx_type, amount, date 
+        from tbl_transaction where accno_id =
+        (select id from tbl_accounts where user_id = 
+        (select id from tbl_users where user_name = '{$_SESSION["uid"]}'));
+        sqlSTMT;
+        $result = mysqli_query($link, $sqlSTMT);//取得使用者交易明細資料。
+        $detailsPage ->details = $result;
+        // var_dump($detailsPage ->details);
+        if (isset($_POST["btnToTxn"])) {
+            header("Location:transaction");
+            mysqli_close($link);
+            exit();
+        }
+
+
+        $this->view("OLB/details", $detailsPage);
     }
 
 

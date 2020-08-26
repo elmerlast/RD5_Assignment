@@ -32,22 +32,22 @@
 
         <div class="col-1">.col-1</div>
         <div class="col-2"><form id="service1" name="service1" method="post" action="">
-          <button class="btn  btn-info " type="submit" name="service1" id="service1" value="deposit">&emsp;存款&emsp;
+          <button class="btn  btn-info " type="submit" name="deposit_service" id="deposit_service" value="deposit">&emsp;存款&emsp;
           </button></form></div>
 
         <div class="col-1">.col-2</div>
         <div class="col-2"><form id="service2" name="service2" method="post" action="">
-        <button class="btn  btn-warning " type="submit" name="service2" id="service2" value="Withdrawal">&emsp;提款&emsp;
+        <button class="btn  btn-warning " type="submit" name="withdrawal_service" id="withdrawal_service" value="withdrawal">&emsp;提款&emsp;
           </button></form></div>
 
           <div class="col-1">.col-2</div>
         <div class="col-2"><form id="service3" name="service3" method="post" action="">
-        <button class="btn  btn-danger " type="submit" name="service3" id="service3" value="Balance">查詢餘額
+        <button class="btn  btn-danger " type="submit" name="balance_service" id="balance_service" value="balance">查詢餘額
           </button></form></div>
 
         <div class="col-1">.col-2</div>
         <div class="col-2"><form id="service4" name="service4" method="post" action="">
-        <button class="btn  btn-success " type="submit" name="service4" id="service4" value="details">查詢明細
+        <button class="btn  btn-success " type="submit" name="details_service" id="details_service" value="details">查詢明細
           </button></form></div>
 
         

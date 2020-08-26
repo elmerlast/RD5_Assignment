@@ -87,7 +87,6 @@ CREATE TABLE `tbl_address` (
 CREATE TABLE `tbl_transaction` (
     `id` int(10) NOT NULL AUTO_INCREMENT,
     `accno_id` int(10) NOT NULL,
-    `tx_no` varchar(24) NOT NULL,
     `tx_type` varchar(10) NOT NULL,
     `amount` double NOT NULL,
     `date` varchar(100) NOT NULL,
@@ -103,10 +102,10 @@ CREATE TABLE `tbl_transaction` (
 -- 新增交易(tbl_transaction)資料表記錄
 --
 
-INSERT INTO `tbl_transaction` (`id`, `accno_id`, `tx_no`, `tx_type`, `amount`, `date`, `to_accno`, `status`, `comments`)
+INSERT INTO `tbl_transaction` (`id`, `accno_id`, `tx_type`, `amount`, `date`, `to_accno`, `status`, `comments`)
 VALUES
-(1, 1, 'TX000001', 'credit', 1000, '2018-02-10 11:32:38', '316116509321', 'SUCCESS', '' ),
-(2, 1, 'TX000002', 'debit', 2104, '2018-02-12 18:50:08', '299023859801', 'SUCCESS', '網購' );
+(1, 1, 'credit', 1000, '2018-02-10 11:32:38', '316116509321', 'SUCCESS', '' ),
+(2, 1, 'debit', 2104, '2018-02-12 18:50:08', '299023859801', 'SUCCESS', '網購' );
 
 
 

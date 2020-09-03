@@ -19,9 +19,10 @@
 
 </head>
 
-<body class="text-center">
-  <form class="form-signin" id="form_sign_in" name="form_sign_in" method="post" action="">
-    <img class="mb-4" src="/RD5_Assignment/img/deposit.png">
+<body class="text-center" background="/RD5_Assignment/img/index_backgorund.jpg">
+ <div class="card " style="width: 26rem;">
+  <form class="form-signin" id="form_deposit" name="form_deposit" method="post" action="">
+    <img class="mb-4" src="/RD5_Assignment/img/deposit.png"  width="150" style="margin-left:-25px;">
     <h1 class="h3 mb-3 font-weight-normal">存款至您的帳戶</h1>
     <label for="inputEmail">目前帳戶號碼：</label>
     <input type="text" readonly="readonly" name="account" id="account" value="<?=$data->account; ?>" class="form-control"  required autofocus>
@@ -31,7 +32,11 @@
 
       <button class="btn btn-lg btn-info btn-block" type="submit" name="btnDeposit" id="btnDeposit" value="確認存款">確認存款
       </button>
+      <button class="btn btn-lg btn-danger btn-block" type="submit" name="btnCancel" id="btnCancel" value="取消" formnovalidate>取消
+      </button>
   </form>
+ </div>
+
 </body>
 
 </html>

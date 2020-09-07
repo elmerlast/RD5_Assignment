@@ -310,14 +310,19 @@ class OLBController extends Controller
         require_once "sql/connDB.php";
 
         $sqlSTMT =<<<sqlSTMT
-        select CONCAT('TX', LPAD(id,6,0)) as tx_id, tx_type, amount, date 
-        from tbl_transaction where accno_id =
-        (select id from tbl_accounts where user_id = 
-        (select id from tbl_users where user_name = '{$_SESSION["uid"]}'));
+        select CONCAT('TX', LPAD(t.id,6,0)) as tx_id, tx_type, amount, `date`, 	balance
+        from tbl_transaction as t
+        left join tbl_accounts as a
+        on t.accno_id = a.id
+        where a.user_id = 
+        (select id from tbl_users where user_name = '{$_SESSION["uid"]}')
+        order by tx_id desc
         sqlSTMT;
         $result = mysqli_query($link, $sqlSTMT);//取得使用者交易明細資料。
         $detailsPage ->details = $result;
-        // var_dump($detailsPage ->details);
+        $row = mysqli_fetch_assoc($result);
+        $detailsPage ->balance = $row["balance"];
+        mysqli_data_seek($result,0);
         if (isset($_POST["btnToTxn"])) {
             header("Location:transaction");
             mysqli_close($link);

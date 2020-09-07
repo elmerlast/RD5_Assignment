@@ -29,6 +29,7 @@
             <th scope="col">增加金額</th>
             <th scope="col">減少金額</th>
             <th scope="col">交易日期</th>
+            <th scope="col">帳戶餘額</th>
           </tr>
         </thead>
         <tbody>
@@ -43,6 +44,19 @@
             <td><?=$row["amount"] ?></td>
             <?php } ?>
             <td><?=$row["date"] ?></td>
+            <td>
+                <?php 
+                  if($row["tx_type"] == "credit"){
+                      echo($data ->balance);
+                      $data ->balance -= $row["amount"];
+                      $skipSt += 1;
+                  }else{
+                      echo($data ->balance);
+                      $data ->balance += $row["amount"];
+                      $skipSt += 1;
+                  }
+                ?>
+            </td>
           </tr>
           <?php } ?>
 

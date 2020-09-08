@@ -7,8 +7,7 @@ class OLBController extends Controller
     {
         $user = $this->model("User");
         session_start();
-        echo "fStYx6nP <br />";
-        var_dump($_SESSION);
+
 
         // $sqlStatement =<<<sqlSTMT
         // SELECT * FROM `tbl_users`;
@@ -168,13 +167,16 @@ class OLBController extends Controller
             header("Location:withdrawal");
         }
 
-        if (isset($_POST["balance_service"])) {
-            echo "<script> alert('您目前帳戶的餘額爲：{$transactionPage->balance}'); </script>";
-
-        }
-
         if (isset($_POST["details_service"])) {
             header("Location:details");
+        }
+
+        if (isset($_POST["logout"])) {
+            unset($_SESSION['uid']);
+            $_SESSION["login"] = 0; //己登出，進入訊息頁面會顯示登出提示。
+            header("Location:status");
+            
+
         }
 
         $this->view("OLB/transaction", $transactionPage);
@@ -198,6 +200,11 @@ class OLBController extends Controller
         $depositPage->account = $rows["acc_no"];
         $depositPage->accId = $rows["id"];//取得使用者欲存款帳戶現在的餘額以及帳戶號碼跟其編號。
 
+        if (isset($_POST["btnCancel"])) {
+            header("Refresh:0.1; url=transaction");
+            mysqli_close($link);
+            exit();
+        }
 
         if (isset($_POST["btnDeposit"])) {
             $depositPage->balance += $_POST["inputDeposit"];
@@ -249,6 +256,11 @@ class OLBController extends Controller
         $withdrawalPage->account = $rows["acc_no"];
         $withdrawalPage->accId = $rows["id"];//取得使用者欲提款帳戶現在的餘額以及帳戶號碼跟其編號。
 
+        if (isset($_POST["btnCancel"])) {
+            header("Refresh:0.1; url=transaction");
+            mysqli_close($link);
+            exit();
+        }
 
         if (isset($_POST["btnWithdrawal"])) {
             if($_POST["inputWithdrawal"] > $withdrawalPage->balance){
@@ -297,14 +309,19 @@ class OLBController extends Controller
         require_once "sql/connDB.php";
 
         $sqlSTMT =<<<sqlSTMT
-        select CONCAT('TX', LPAD(id,6,0)) as tx_id, tx_type, amount, date 
-        from tbl_transaction where accno_id =
-        (select id from tbl_accounts where user_id = 
-        (select id from tbl_users where user_name = '{$_SESSION["uid"]}'));
+        select CONCAT('TX', LPAD(t.id,6,0)) as tx_id, tx_type, amount, `date`, 	balance
+        from tbl_transaction as t
+        left join tbl_accounts as a
+        on t.accno_id = a.id
+        where a.user_id = 
+        (select id from tbl_users where user_name = '{$_SESSION["uid"]}')
+        order by tx_id desc
         sqlSTMT;
         $result = mysqli_query($link, $sqlSTMT);//取得使用者交易明細資料。
         $detailsPage ->details = $result;
-        // var_dump($detailsPage ->details);
+        $row = mysqli_fetch_assoc($result);
+        $detailsPage ->balance = $row["balance"];
+        mysqli_data_seek($result,0);
         if (isset($_POST["btnToTxn"])) {
             header("Location:transaction");
             mysqli_close($link);
@@ -338,11 +355,9 @@ class OLBController extends Controller
             $this->view("OLB/status", $information);
             exit();
         } else {
-            $_SESSION["uid"] = "Guest";
             $information->message = "已登出，2秒後回到到登入頁面";
-            $_SESSION["lastPage"] = null;
             header("Refresh:2; url=index");
-            $this->view("OLB/status", $information);
+            $this->view("OLB/index", $information);
             exit();
         }
 

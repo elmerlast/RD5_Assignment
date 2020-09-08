@@ -19,9 +19,10 @@
 
 </head>
 
-<body class="text-center">
-  <form class="form-signin" id="form_sign_in" name="form_sign_in" method="post" action="">
-    <img class="mb-4" src="/RD5_Assignment/img/withdraw.png">
+<body class="text-center" background="/RD5_Assignment/img/index_backgorund.jpg">
+ <div class="card " style="width: 26rem;">
+  <form class="form-signin" id="form_withdrawal" name="form_withdrawal" method="post" action="">
+    <img class="mb-4" src="/RD5_Assignment/img/withdraw.png" width="130" >
     <h1 class="h3 mb-3 font-weight-normal">從您的帳戶提款</h1>
     <label for="inputEmail">目前帳戶號碼：</label>
     <input type="text" readonly="readonly" name="account" id="account" value="<?=$data->account; ?>" class="form-control"  required autofocus>
@@ -31,7 +32,11 @@
 
       <button class="btn btn-lg btn-warning btn-block" type="submit" name="btnWithdrawal" id="btnWithdrawal" value="確認提款">確認提款
       </button>
+      <button class="btn btn-lg btn-danger btn-block" type="submit" name="btnCancel" id="btnCancel" value="取消" formnovalidate>取消
+      </button>
   </form>
+ </div>
 </body>
+
 
 </html>

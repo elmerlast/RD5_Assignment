@@ -6,6 +6,8 @@ class details {
     public $txnAmount;
     public $txnDate;
     public $details;
+    public $balance;
+
     
 }
 

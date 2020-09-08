@@ -22,7 +22,7 @@
 <div class="container card" style="margin-top:40px;">
       <h1>歡迎來到線上網路銀行！</h1>
 
-      <div class="row"><div class="col-12"><p id="textBalance">帳戶餘額：<?php echo $data->balance;?></p></div></div>
+      <div class="row"><div class="col-12"><p id="textBalance">帳戶餘額：<?php echo(number_format($data->balance));?></p></div></div>
 
       <h3>選擇您要進行的服務</h3>
       <div class="row"><div class="col-12"></div></div>

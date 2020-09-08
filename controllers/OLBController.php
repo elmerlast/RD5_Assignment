@@ -8,13 +8,6 @@ class OLBController extends Controller
         $user = $this->model("User");
         session_start();
 
-
-        // $sqlStatement =<<<sqlSTMT
-        // SELECT * FROM `tbl_users`;
-        // sqlSTMT;
-        // $result =mysqli_query($link, $sqlStatement);
-        // print_r($result);
-
         //如果使用者有登入過且SSESSION時效未過期，將使用者自動傳送到交易頁面
         if (isset($_SESSION["uid"])) {
             header("Location:transaction");
@@ -27,20 +20,20 @@ class OLBController extends Controller
             $user->userName = $_POST["inputUid"];
             $user->userPwd = hash('sha256', "{$_POST["inputPwd"]}");
             if ($user->userName && $user->userPwd) {
-                require_once "sql/connDB.php";
+                require_once("sql/connDB.php");
                 $sql = "select * from tbl_users where user_name = '$user->userName' and password='$user->userPwd'";
                 $result = mysqli_query($link, $sql);
                 $rows = mysqli_fetch_array($result);
                 if ($rows) {
                     $_SESSION["uid"] = $rows["user_name"];
-                    $_SESSION["login"] = 1; //己登入，進入訊息頁面會顯示登入提示。
+                    $_SESSION["msgStatus"] = 1; //己登入，進入訊息頁面會顯示登入提示。
                     header("Location:status");
                     exit();
                 } else {
-                    echo "<script> alert('帳號或密碼錯誤！'); </script>";
+                    $user->error = true;
                 }
             }
-            mysqli_close();
+            mysqli_close($link);
 
         }
         $this->view("OLB/index", $user);
@@ -120,15 +113,12 @@ class OLBController extends Controller
                 VALUES
                 ({$addAcconUid["id"]}, '{$registerPage ->accNo}', {$registerPage ->balance}, '{$registerPage ->accStatus}', '{$bdate}');
                 sqlSTMT;
-                mysqli_query($link, $sqlSTMT) or die(mysqli_error($link));      
+                mysqli_query($link, $sqlSTMT) or die(mysqli_error($link));
+                mysqli_close($link);      
 
-                echo "<script> alert('註冊成功。關閉此對話欄回到登入頁面'); 
-                </script> ";
-                header("Refresh:0.1; url=transaction");
-                mysqli_close($link);
+                $_SESSION["msgStatus"] = 5; //註冊成功，進入訊息頁面會顯示註冊完成提示。
+                header("Location:status");
                 exit();
-                
-
             }
     
 
@@ -173,7 +163,7 @@ class OLBController extends Controller
 
         if (isset($_POST["logout"])) {
             unset($_SESSION['uid']);
-            $_SESSION["login"] = 0; //己登出，進入訊息頁面會顯示登出提示。
+            $_SESSION["msgStatus"] = 2; //己登出，進入訊息頁面會顯示登出提示。
             header("Location:status");
             
 
@@ -216,8 +206,6 @@ class OLBController extends Controller
             sqlSTMT;//更新使用者存款的新餘額。
             mysqli_query($link, $sqlSTMT) or die(mysqli_error($link));
             if(mysqli_affected_rows($link) >0 ){
-                echo "<script> alert('存款成功！您目前帳戶的餘額爲：{$depositPage->balance} 關閉頁面後將回到銀行首頁'); 
-                </script> ";
 
                 $date = gmdate('Y-m-d H:i:s', time() + 3600 * 8);
                 $sqlSTMT =<<<sqlSTMT
@@ -226,12 +214,15 @@ class OLBController extends Controller
                 ($depositPage->accId, 'credit', {$_POST["inputDeposit"]}, '$date', '$depositPage->account', 'SUCCESS', '' );
                 sqlSTMT;//新增該筆存款成功的交易明細資料。
                 mysqli_query($link, $sqlSTMT);
+                mysqli_close($link);
 
+                $_SESSION["msgStatus"] = 3; //存款成功，進入訊息頁面會顯示成功提示。
+                $_SESSION["balance"] = $depositPage->balance;
+                header("Location:status");
+                exit();
     
             }
-            header("Refresh:0.1; url=transaction");
-            mysqli_close($link);
-            exit();
+            
 
         }
         $this->view("OLB/deposit", $depositPage);
@@ -279,9 +270,6 @@ class OLBController extends Controller
             sqlSTMT;//更新使用者存款的新餘額。
             mysqli_query($link, $sqlSTMT) or die(mysqli_error($link));
             if(mysqli_affected_rows($link) >0 ){
-                echo "<script> alert('提款成功！您目前帳戶的餘額爲：{$withdrawalPage->balance}  關閉頁面後將回到銀行首頁'); 
-                </script> ";
-
                 $date = gmdate('Y-m-d H:i:s', time() + 3600 * 8);
                 $sqlSTMT =<<<sqlSTMT
                 INSERT INTO `tbl_transaction` ( `accno_id`, `tx_type`, `amount`, `date`, `to_accno`, `status`, `comments`)
@@ -289,11 +277,14 @@ class OLBController extends Controller
                 ($withdrawalPage->accId, 'debit', {$_POST["inputWithdrawal"]}, '$date', '$withdrawalPage->account', 'SUCCESS', '' );
                 sqlSTMT;//新增該筆提款成功的交易明細資料。
                 mysqli_query($link, $sqlSTMT);
+                mysqli_close($link);
+
+                $_SESSION["msgStatus"] = 4; //提款成功，進入訊息頁面會顯示成功提示。
+                $_SESSION["balance"] = $withdrawalPage->balance;
+                header("Location:status");
+                exit();
 
             }
-            header("Refresh:0.1; url=transaction");
-            mysqli_close($link);
-            exit();
 
         }
         $this->view("OLB/withdrawal", $withdrawalPage);
@@ -348,19 +339,41 @@ class OLBController extends Controller
          *提醒訊息頁面判斷，顯示出已登出的提示訊息。
          */
 
-        if ($_SESSION["login"] == 1) {
-            $_SESSION["login"] = 0;
-            $information->message = "登入成功!，2秒後自動跳轉到龬路銀行頁面";
-            header("Refresh:2; url=transaction");
-            $this->view("OLB/status", $information);
-            exit();
-        } else {
-            $information->message = "已登出，2秒後回到到登入頁面";
-            header("Refresh:2; url=index");
-            $this->view("OLB/index", $information);
-            exit();
-        }
+        switch ($_SESSION["msgStatus"]){
+            case 1:
+                $information->message = "登入成功，2秒後自動跳轉到龬路銀行頁面";
+                header("Refresh:2; url=transaction");
+                $this->view("OLB/status", $information);
+                exit();
 
+            case 2:
+                $information->message = "已登出，2秒後回到登入頁面";
+                header("Refresh:2; url=index");
+                $this->view("OLB/status", $information);
+                exit();
+
+            case 3:
+                $_SESSION["balance"] = number_format($_SESSION["balance"]);
+                $information->message = "存款成功！，您最新的餘額為{$_SESSION["balance"]}<br/>2秒後回到龬路銀行頁面";
+                header("Refresh:2; url=transaction");
+                $this->view("OLB/status", $information);
+                exit();
+
+            case 4:
+                $_SESSION["balance"] = number_format($_SESSION["balance"]);
+                $information->message = "提款成功！，您最新的餘額為{$_SESSION["balance"]}<br/>2秒後回到龬路銀行頁面";
+                header("Refresh:2; url=transaction");
+                $this->view("OLB/status", $information);
+                exit(); 
+                
+            case 5:
+                $_SESSION["balance"] = number_format($_SESSION["balance"]);
+                $information->message = "註冊成功，2秒後回到登入頁面";
+                header("Refresh:2; url=index");
+                $this->view("OLB/status", $information);
+                exit(); 
+        }
+        
     }
 
 }

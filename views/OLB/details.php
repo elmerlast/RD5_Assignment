@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -37,21 +37,21 @@
           <tr>
             <th scope="row"><?=$row["tx_id"] ?></th>
             <?php if($row["tx_type"] == "credit"){?>
-            <td><?=$row["amount"] ?></td>
+            <td align="right"><?=number_format($row["amount"]) ?></td>
             <td><?="" ?></td>
             <?php }else{ ?>
             <td><?="" ?></td>
-            <td><?=$row["amount"] ?></td>
+            <td align="right"><?=number_format($row["amount"]) ?></td>
             <?php } ?>
             <td><?=$row["date"] ?></td>
-            <td>
+            <td align="right">
                 <?php 
                   if($row["tx_type"] == "credit"){
-                      echo($data ->balance);
+                      echo(number_format($data ->balance));
                       $data ->balance -= $row["amount"];
                       $skipSt += 1;
                   }else{
-                      echo($data ->balance);
+                      echo(number_format($data ->balance));
                       $data ->balance += $row["amount"];
                       $skipSt += 1;
                   }

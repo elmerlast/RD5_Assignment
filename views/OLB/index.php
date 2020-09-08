@@ -1,4 +1,5 @@
-<html lang="en">
+<!DOCTYPE html>
+<html>
 
 <head>
   <meta charset="utf-8">
@@ -7,14 +8,8 @@
 
   <title>線上網銀</title>
 
-  <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
-
-  <!-- Bootstrap core CSS -->
-
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
-  <!-- Custom styles for this template -->
   <link rel="stylesheet" type="text/css" href="/RD5_Assignment/CSS/signin.css">
 
 
@@ -35,6 +30,7 @@
     <input type="password" id="inputPwd" name="inputPwd" class="form-control" placeholder="請輸入密碼" required>
     <div class="checkbox mb-3">
       <label>
+        <?php if($data->error){echo('<label style="color: red;" >※帳號或密碼錯誤</label>');} ?>
         <p>還沒有帳號嗎 ? <a href="/RD5_Assignment/OLB/register"> 點我註冊</a></p>
       </label>
     </div>

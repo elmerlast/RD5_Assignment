@@ -22,8 +22,7 @@ class OLBController extends Controller
         }
 
         /*
-         *使用者按下「登入」按鈕，在確認使用者至少有輸入一個字元後讓使用者登入，
-         *並在SESSION中記錄登入成功的狀態(Value = 1)。
+         *使用者按下「登入」按鈕
          */
         if (isset($_POST["btnLogin"])) {
             $user->userName = $_POST["inputUid"];

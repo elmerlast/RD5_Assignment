@@ -7,8 +7,6 @@ class details {
     public $txnDate;
     public $details;
     public $balance;
-
-    
 }
 
 ?>

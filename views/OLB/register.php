@@ -3,16 +3,10 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>會員登入</title>
-	<!-- Bootstrap core CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
 		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
-
-
-	<!-- Custom styles for this template -->
-	<!-- <link rel="stylesheet" type="text/css" href="/RD5_Assignment/CSS/grid.css"> -->
-
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 
@@ -50,11 +44,13 @@
 								<div class="form-row">
 								<div class="col form-group">
 										<label>使用者名稱</label>
+										<?php if(isset($_POST["userError"])) { echo '&nbsp;<label style="color: red;">輸入的使用者名稱己被使用！</label>'; } ?>
 										<input type="text" id="inputUserName" name="inputUserName" class="form-control" placeholder="請輸入英文或數字">
 									</div> <!-- form-group end.// -->
 									<div class="col form-group">
 									<label>電子郵件</label>
 									<input type="email" id="inputEmail" name="inputEmail" class="form-control" placeholder="">
+									<?php if(isset($_POST["emailError"])) { echo '&nbsp;<label style="color: red; ">輸入的電子郵件己被使用！</label>'; } ?>
 									</div> <!-- form-group end.// -->
 								</div> <!-- form-row end.// -->
 

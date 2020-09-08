@@ -62,21 +62,6 @@ VALUES
 (4, '張', '世偉', 'xxc2jjy3', 'xudokinneby-1466@yopmail.com', 'eb8536a5acde048fb1d542318119ea276122d3ac9fe6d9231fba53d18e3665d3','Male', '0961922175', '2015-09-04 10:03:24'),
 (5, '王', '紹一', 'jib8cb2lk', 'unnosoleff-2307@yopmail.com', '3b2966c0210e4e977d0b796cd1814e3545c2291c8884be1d90e7ec47c0f63d08','Male', '0932919438', '2018-01-17 15:43:08');
 
---
--- 建立地址(tbl_users)資料表結構
---
-
-CREATE TABLE `tbl_address` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `user_id` int(10) NOT NULL,
-  `address` varchar(200) NOT NULL,
-  `zipcode` int(10) NOT NULL,
-  PRIMARY KEY (`id`),
-  constraint `fk_address_user_id` foreign key (user_id) references tbl_users (id) ON UPDATE CASCADE ON DELETE CASCADE
-)ENGINE=InnoDB;
-
-
-
 
 
 --
@@ -92,7 +77,6 @@ CREATE TABLE `tbl_transaction` (
     `date` varchar(100) NOT NULL,
     `to_accno` varchar(20) NOT NULL,
     `status` varchar(10) NOT NULL,
-    `comments` varchar(100) NOT NULL,
     PRIMARY KEY (`id`),
     constraint `fk_transaction_accounts` foreign key (accno_id) references tbl_accounts (id) ON UPDATE CASCADE ON DELETE CASCADE
 -- )ENGINE=InnoDB AUTO_INCREMENT= ;
@@ -102,10 +86,10 @@ CREATE TABLE `tbl_transaction` (
 -- 新增交易(tbl_transaction)資料表記錄
 --
 
-INSERT INTO `tbl_transaction` (`id`, `accno_id`, `tx_type`, `amount`, `date`, `to_accno`, `status`, `comments`)
+INSERT INTO `tbl_transaction` (`id`, `accno_id`, `tx_type`, `amount`, `date`, `to_accno`, `status`)
 VALUES
-(1, 1, 'credit', 1000, '2018-02-10 11:32:38', '316116509321', 'SUCCESS', '' ),
-(2, 1, 'debit', 2104, '2018-02-12 18:50:08', '299023859801', 'SUCCESS', '網購' );
+(1, 1, 'credit', 1000, '2018-02-10 11:32:38', '316116509321', 'SUCCESS' ),
+(2, 1, 'debit', 2104, '2018-02-12 18:50:08', '299023859801', 'SUCCESS' );
 
 
 

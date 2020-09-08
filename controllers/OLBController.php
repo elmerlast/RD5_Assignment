@@ -48,7 +48,7 @@ class OLBController extends Controller
          */
         if (isset($_POST["btnRegister"])) {
 
-            //檢查使用者輸入的使用者名稱是否已被註冊。
+           	//檢查使用者輸入的使用者名稱及電子郵件是否已被註冊。
             require_once "sql/connDB.php";
             $sql = "select user_name from tbl_users;";
             $result = mysqli_query($link, $sql);
@@ -57,8 +57,22 @@ class OLBController extends Controller
             }
             $rows[] =array("{$_POST["inputUserName"]}");
             $rows1d = array_column($rows,0);
-            if (count($rows1d) != count(array_unique($rows1d))) {
-                echo "<script> alert('輸入的使用者名稱己被使用！'); </script>";
+            $uidArray = $rows1d;
+
+            $sql = "select email from tbl_users;";
+            $result = mysqli_query($link, $sql);
+            while($row = mysqli_fetch_row($result)){
+                $rows[]=$row;
+            }
+            $rows[] =array("{$_POST["inputEmail"]}");
+            $rows1d = array_column($rows,0);//將2維陣列降維成1維陣列。
+            $emailArray = $rows1d;
+        
+
+            if (count($uidArray) != count(array_unique($uidArray))) {
+                $_POST["userError"] = "userError";
+            }elseif (count($emailArray) != count(array_unique($emailArray))){
+                $_POST["emailError"] = "emailError";
             }else{
 
                 //新增使用者帳號
@@ -209,9 +223,9 @@ class OLBController extends Controller
 
                 $date = gmdate('Y-m-d H:i:s', time() + 3600 * 8);
                 $sqlSTMT =<<<sqlSTMT
-                INSERT INTO `tbl_transaction` ( `accno_id`, `tx_type`, `amount`, `date`, `to_accno`, `status`, `comments`)
+                INSERT INTO `tbl_transaction` ( `accno_id`, `tx_type`, `amount`, `date`, `to_accno`, `status`)
                 VALUES
-                ($depositPage->accId, 'credit', {$_POST["inputDeposit"]}, '$date', '$depositPage->account', 'SUCCESS', '' );
+                ($depositPage->accId, 'credit', {$_POST["inputDeposit"]}, '$date', '$depositPage->account', 'SUCCESS');
                 sqlSTMT;//新增該筆存款成功的交易明細資料。
                 mysqli_query($link, $sqlSTMT);
                 mysqli_close($link);
@@ -272,9 +286,9 @@ class OLBController extends Controller
             if(mysqli_affected_rows($link) >0 ){
                 $date = gmdate('Y-m-d H:i:s', time() + 3600 * 8);
                 $sqlSTMT =<<<sqlSTMT
-                INSERT INTO `tbl_transaction` ( `accno_id`, `tx_type`, `amount`, `date`, `to_accno`, `status`, `comments`)
+                INSERT INTO `tbl_transaction` ( `accno_id`, `tx_type`, `amount`, `date`, `to_accno`, `status` )
                 VALUES
-                ($withdrawalPage->accId, 'debit', {$_POST["inputWithdrawal"]}, '$date', '$withdrawalPage->account', 'SUCCESS', '' );
+                ($withdrawalPage->accId, 'debit', {$_POST["inputWithdrawal"]}, '$date', '$withdrawalPage->account', 'SUCCESS' );
                 sqlSTMT;//新增該筆提款成功的交易明細資料。
                 mysqli_query($link, $sqlSTMT);
                 mysqli_close($link);
@@ -335,8 +349,6 @@ class OLBController extends Controller
         session_start();
         /*
          *根據session的login記錄判斷在提醒訊息頁面中要顯示什麼提示訊息。
-         *提示完成功訊息後會將session的login的值設定爲「0」，讓使用者下一次到達此頁面時好以讓
-         *提醒訊息頁面判斷，顯示出已登出的提示訊息。
          */
 
         switch ($_SESSION["msgStatus"]){

@@ -8,7 +8,6 @@ class register {
     public $gender;
     public $phone;
     public $password;
-
     public $accNo;
     public $balance;
     public $accStatus;
